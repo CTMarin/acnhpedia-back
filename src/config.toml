@@ -1,0 +1,6 @@
+NOT_FOUND_MESSAGE = "User Not Found"
+EXISTING_USER_MESSAGE = "User already exists"
+
+SERVER_DATA_PATH = "server-data/users.txt"
+TEST_SERVER_DATA_PATH = "server-data/users.txt"
+USER_SPLIT_CHAR = ":"
