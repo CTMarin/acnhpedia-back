@@ -54,6 +54,28 @@ pub fn remove_obtained_card(user: &str, input_card_type: &str, input_id: i32) ->
     Ok(200)
 }
 
+pub fn get_obtained_cards_by_type(user: &str, input_card_type: &str) -> Vec<String> {
+    let mut result = Vec::<String>::new();
+    if exists_db_file(user) {
+        let file_string = user_file_name(user);
+        let path = Path::new(file_string.as_str());
+        let file = File::open(path).unwrap();
+        let buffer_reader = BufReader::new(file);
+        let mut lines_iter = buffer_reader.lines().map(|line| line.unwrap());
+    
+        while let Some(line) = lines_iter.next() {
+            let mut split = line.split(":");
+            let card_type = split.nth(0).unwrap();
+            let id = split.nth(0).unwrap();
+            if card_type.eq(input_card_type) {
+                result.push(String::from(id)); 
+            }
+        }
+    }
+
+    return result;
+}
+
 pub fn check_obtained_card(user: &str, input_card_type: &str, input_id: i32) -> bool {
     if exists_db_file(user) {
         let file_string = user_file_name(user);

@@ -3,11 +3,14 @@ mod libacnh;
 use std::{
     net::SocketAddr, 
 };
-use axum::{routing::{post}, Router, http::StatusCode, Json};
+use axum::{routing::{get, post}, Router, http::StatusCode, Json};
+use axum_macros::debug_handler;
 use serde::Deserialize;
 use http::{Method};
 use tower_http::cors::{Any, CorsLayer};
 use libacnh::{logging, users, obtained};
+use axum::extract::{Query};
+
 
 #[tokio::main]
 async fn main() {
@@ -17,6 +20,7 @@ async fn main() {
         .route("/login", post(login))
         .route("/obtain", post(obtain))
         .route("/forfait", post(forfait))
+        .route("/obtained", get(obtained))
         .layer(CorsLayer::new()
             .allow_methods([Method::GET, Method::POST])
             .allow_origin(Any)
@@ -114,6 +118,16 @@ async fn forfait(Json(payload): Json<ForfaitPost>) -> Result<StatusCode, StatusC
     }
 }
 
+#[debug_handler]
+async fn obtained(params: Query<ObtainedGet>) -> Json<Vec<String>> {
+    logging::info(format!("Request for obtained cards!").as_str());
+
+    if users::check_user(&params.0.user) {
+        return Json(obtained::get_obtained_cards_by_type(&params.0.user, &params.0.card_type))
+    } else {
+        return Json(vec!());
+    }
+}
 
 #[derive(Deserialize)]
 struct RegisterPost {
@@ -141,5 +155,11 @@ struct ForfaitPost {
     user: String,
     card_type: String,
     id: i32
+}
+
+#[derive(Deserialize)]
+struct ObtainedGet {
+    user: String,
+    card_type: String
 }
 
