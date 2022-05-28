@@ -7,7 +7,7 @@ use axum::{routing::{post}, Router, http::StatusCode, Json};
 use serde::Deserialize;
 use http::{Method};
 use tower_http::cors::{Any, CorsLayer};
-use libacnh::{logging, users};
+use libacnh::{logging, users, obtained};
 
 #[tokio::main]
 async fn main() {
@@ -15,6 +15,8 @@ async fn main() {
     let app = Router::new()
         .route("/register", post(register))
         .route("/login", post(login))
+        .route("/obtain", post(obtain))
+        .route("/forfait", post(forfait))
         .layer(CorsLayer::new()
             .allow_methods([Method::GET, Method::POST])
             .allow_origin(Any)
@@ -72,6 +74,46 @@ async fn login(Json(payload): Json<LoginPost>) -> Result<StatusCode, StatusCode>
     }
 }
 
+async fn obtain(Json(payload): Json<ObtainPost>) -> Result<StatusCode, StatusCode> {
+    logging::info(format!("Obtain card request!").as_str());
+
+    match obtained::add_obtained_card(&payload.user, &payload.card_type, payload.id) {
+        Ok(200) => {
+            logging::info(format!("Card {}:{} obtained", &payload.card_type, payload.id).as_str());
+            Ok(StatusCode::OK)
+        },
+        Err(409) => {
+            logging::error(format!("Card {}:{} has been already obtained", &payload.card_type, payload.id).as_str());
+            Err(StatusCode::CONFLICT)
+        },
+        Err(500) => {
+            logging::error("Internal server error");
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+        _ => Err(StatusCode::BAD_REQUEST)
+    }
+}
+
+async fn forfait(Json(payload): Json<ForfaitPost>) -> Result<StatusCode, StatusCode> {
+    logging::info(format!("Forfait card request!").as_str());
+
+    match obtained::remove_obtained_card(&payload.user, &payload.card_type, payload.id) {
+        Ok(200) => {
+            logging::info(format!("Card {}:{} forfait", &payload.card_type, payload.id).as_str());
+            Ok(StatusCode::OK)
+        },
+        Err(404) => {
+            logging::error(format!("Card {}:{} is not obtained", &payload.card_type, payload.id).as_str());
+            Err(StatusCode::NOT_FOUND)
+        },
+        Err(500) => {
+            logging::error("Internal server error");
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+        _ => Err(StatusCode::BAD_REQUEST)
+    }
+}
+
 
 #[derive(Deserialize)]
 struct RegisterPost {
@@ -87,4 +129,17 @@ struct LoginPost {
     password: String,
 }
 
+#[derive(Deserialize)]
+struct ObtainPost {
+    user: String,
+    card_type: String,
+    id: i32
+}
+
+#[derive(Deserialize)]
+struct ForfaitPost {
+    user: String,
+    card_type: String,
+    id: i32
+}
 

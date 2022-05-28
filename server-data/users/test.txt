@@ -1,4 +1,5 @@
 fish:1
 houseware:5
-fossils:13
+villager:7
+furniture:4
 fish:3
