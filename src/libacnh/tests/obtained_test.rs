@@ -16,7 +16,7 @@ fn GivenObtainedCard_WhenCheckIt_ThenReturnTrue() {
 
     let user: &str = "test";
     let card_type: &str = "fish";
-    let id: i32 = 1;
+    let id: &str = "1";
 
     obtained::check_obtained_card(user, card_type, id);
 
@@ -32,7 +32,7 @@ fn GivenNotObtainedCardDifferentId_WhenCheckIt_ThenReturnFalse() {
 
     let user: &str = "test";
     let card_type: &str = "fish";
-    let id: i32 = 3;
+    let id: &str = "3";
 
     obtained::check_obtained_card(user, card_type, id);
 
@@ -48,7 +48,7 @@ fn GivenNotObtainedCardDifferentCardType_WhenCheckIt_ThenReturnFalse() {
 
     let user: &str = "test";
     let card_type: &str = "houseware";
-    let id: i32 = 13;
+    let id: &str = "13";
 
     obtained::check_obtained_card(user, card_type, id);
 
@@ -64,7 +64,7 @@ fn GivenNotExistingUser_WhenCheckACardObtained_ThenReturnFalse() {
 
     let user: &str = "notexist";
     let card_type: &str = "fossils";
-    let id: i32 = 13;
+    let id: &str = "13";
 
     obtained::check_obtained_card(user, card_type, id);
 
@@ -81,7 +81,7 @@ fn GivenNotObtainedCard_WhenObtainsIt_ThenReturnCode200() {
 
     let user: &str = "test";
     let card_type: &str = "fish";
-    let id: i32 = 3;
+    let id: &str = "3";
 
     let expected_value: i32 = 200;
     let obtained_value: i32 = obtained::add_obtained_card(user, card_type, id).unwrap();
@@ -96,7 +96,7 @@ fn GivenObtainedCard_WhenObtainsIt_ThenReturnError409() {
 
     let user: &str = "test";
     let card_type: &str = "furniture";
-    let id: i32 = 4;
+    let id: &str = "4";
 
     let expected_value: i32 = 409;
     let obtained_value: i32 = obtained::add_obtained_card(user, card_type, id).unwrap_err();
@@ -110,7 +110,7 @@ fn GivenObtainedCard_WhenRemoveFromObtained_ThenRemovesCardFromDB() {
 
     let user: &str = "test";
     let card_type: &str = "fossils";
-    let id: i32 = 13;
+    let id: &str = "13";
 
     let expected_value: i32 = 200;
     let obtained_value: i32 = obtained::remove_obtained_card(user, card_type, id).unwrap();
@@ -125,7 +125,7 @@ fn GivenNotObtainedCard_WhenRemoveFromObtained_ThenReturns404() {
 
     let user: &str = "test";
     let card_type: &str = "fish";
-    let id: i32 = 99;
+    let id: &str = "99";
 
     let expected_value: i32 = 404;
     let obtained_value: i32 = obtained::remove_obtained_card(user, card_type, id).unwrap_err();

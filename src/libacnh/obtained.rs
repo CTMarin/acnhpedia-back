@@ -10,7 +10,7 @@ fn user_file_name(user: &str) -> String {
     file
 }
 
-pub fn add_obtained_card(user: &str, card_type: &str, id: i32) -> Result<i32, i32> {
+pub fn add_obtained_card(user: &str, card_type: &str, id: &str) -> Result<i32, i32> {
     if !check_obtained_card(user, card_type, id) {
         if let Err(_) = writeln!(open_user_file(user), "{}:{}", card_type, id) {
             return Err(500)
@@ -23,7 +23,7 @@ pub fn add_obtained_card(user: &str, card_type: &str, id: i32) -> Result<i32, i3
     }
 }
 
-pub fn remove_obtained_card(user: &str, input_card_type: &str, input_id: i32) -> Result<i32, i32> {
+pub fn remove_obtained_card(user: &str, input_card_type: &str, input_id: &str) -> Result<i32, i32> {
     if check_obtained_card(user, input_card_type, input_id) {
         if exists_db_file(user) {
             let file_string = user_file_name(user);
@@ -36,8 +36,8 @@ pub fn remove_obtained_card(user: &str, input_card_type: &str, input_id: i32) ->
             while let Some(line) = lines_iter.next() {
                 let mut split = line.split(":");
                 let card_type = split.nth(0).unwrap();
-                let id = split.nth(0).unwrap().parse::<i32>().unwrap();
-                if !card_type.eq(input_card_type) && !(id == input_id) {
+                let id = split.nth(0).unwrap();
+                if !card_type.eq(input_card_type) && !id.eq(input_id) {
                     new_content.push_str(line.as_str());
                     new_content.push_str("\n");
                 }
@@ -76,7 +76,7 @@ pub fn get_obtained_cards_by_type(user: &str, input_card_type: &str) -> Vec<Stri
     return result;
 }
 
-pub fn check_obtained_card(user: &str, input_card_type: &str, input_id: i32) -> bool {
+pub fn check_obtained_card(user: &str, input_card_type: &str, input_id: &str) -> bool {
     if exists_db_file(user) {
         let file_string = user_file_name(user);
         let path = Path::new(file_string.as_str());
@@ -87,8 +87,8 @@ pub fn check_obtained_card(user: &str, input_card_type: &str, input_id: i32) -> 
         while let Some(line) = lines_iter.next() {
             let mut split = line.split(":");
             let card_type = split.nth(0).unwrap();
-            let id = split.nth(0).unwrap().parse::<i32>().unwrap();
-            if card_type.eq(input_card_type) && id == input_id {
+            let id = split.nth(0).unwrap();
+            if card_type.eq(input_card_type) && id.eq(input_id) {
                 return true
             }
         }

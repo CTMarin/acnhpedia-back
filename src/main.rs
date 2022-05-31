@@ -81,7 +81,7 @@ async fn login(Json(payload): Json<LoginPost>) -> Result<StatusCode, StatusCode>
 async fn obtain(Json(payload): Json<ObtainPost>) -> Result<StatusCode, StatusCode> {
     logging::info(format!("Obtain card request!").as_str());
 
-    match obtained::add_obtained_card(&payload.user, &payload.card_type, payload.id) {
+    match obtained::add_obtained_card(&payload.user, &payload.card_type, &payload.id) {
         Ok(200) => {
             logging::info(format!("Card {}:{} obtained", &payload.card_type, payload.id).as_str());
             Ok(StatusCode::OK)
@@ -101,7 +101,7 @@ async fn obtain(Json(payload): Json<ObtainPost>) -> Result<StatusCode, StatusCod
 async fn forfait(Json(payload): Json<ForfaitPost>) -> Result<StatusCode, StatusCode> {
     logging::info(format!("Forfait card request!").as_str());
 
-    match obtained::remove_obtained_card(&payload.user, &payload.card_type, payload.id) {
+    match obtained::remove_obtained_card(&payload.user, &payload.card_type, &payload.id) {
         Ok(200) => {
             logging::info(format!("Card {}:{} forfait", &payload.card_type, payload.id).as_str());
             Ok(StatusCode::OK)
@@ -147,14 +147,14 @@ struct LoginPost {
 struct ObtainPost {
     user: String,
     card_type: String,
-    id: i32
+    id: String
 }
 
 #[derive(Deserialize)]
 struct ForfaitPost {
     user: String,
     card_type: String,
-    id: i32
+    id: String
 }
 
 #[derive(Deserialize)]
