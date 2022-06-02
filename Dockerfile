@@ -4,11 +4,15 @@ WORKDIR /code
 RUN cargo init
 COPY Cargo.toml /code/Cargo.toml
 RUN cargo fetch
-COPY . /code
+COPY .. /code
+
+EXPOSE 5000
 
 FROM base AS builder
 
-RUN cargo build --release --offline
+RUN cargo build --release
+
+EXPOSE 5000
 
 FROM debian:buster-slim
 
