@@ -4,6 +4,16 @@ rust:
   - beta
   - nightly
 jobs:
-  allow_failures:
-    - rust: nightly
-  fast_finish: true
+  include:
+    - stage: "Tests"
+      script: cargo test
+      allow_failures:
+        - rust: nightly
+      fast_finish: true
+
+    - stage: "Deploy"
+      deploy:
+        on:
+          branch: master
+        provider: cargo
+        token: $CRATES_TOKEN
