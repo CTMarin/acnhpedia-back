@@ -1,7 +1,6 @@
 fish:1
 fish:3
 bugs:5
-fish:6
+sea:1
+sea:2
 villagers:1
-villagers:2
-villagers:3

@@ -16,6 +16,7 @@ use axum::extract::{Query};
 async fn main() {
 
     let app = Router::new()
+        .route("/hello", get(|| async { "Hello, World!" }))
         .route("/register", post(register))
         .route("/login", post(login))
         .route("/obtain", post(obtain))
